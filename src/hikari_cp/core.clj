@@ -56,7 +56,7 @@
 (def ^{:private true} IntGte1000
   (s/both s/Int (s/pred gte-1000? 'gte-1000?)))
 
-(def ConfigurationOptions
+(def BaseConfigurationOptions
   {:auto-commit        s/Bool
    :read-only          s/Bool
    :connection-timeout IntGte1000
@@ -65,8 +65,21 @@
    :max-lifetime       IntGte0
    :minimum-idle       IntGte0
    :maximum-pool-size  IntGte1
-   :adapter            AdaptersList
    s/Keyword           s/Any})
+
+(def AdapterConfigurationOptions
+  (assoc BaseConfigurationOptions
+         :adapter AdaptersList))
+
+(def JDBCUrlConfigurationOptions
+  (assoc BaseConfigurationOptions
+         :jdbc-url s/Str
+         :driver-class-name s/Str))
+
+(def ConfigurationOptions (s/conditional
+                             :adapter AdapterConfigurationOptions
+                             :jdbc-url JDBCUrlConfigurationOptions))
+
 
 (defn- exception-message
   ""
@@ -107,10 +120,9 @@
                 password
                 pool-name
                 read-only
-                username]} options
-        datasource-class-name (get
-                               adapters-to-datasource-class-names
-                               adapter)]
+                username
+                jdbc-url
+                driver-class-name]} options]
     ;; Set pool-specific properties
     (doto config
       (.setAutoCommit          auto-commit)
@@ -120,8 +132,13 @@
       (.setIdleTimeout         idle-timeout)
       (.setMaxLifetime         max-lifetime)
       (.setMinimumIdle         minimum-idle)
-      (.setMaximumPoolSize     maximum-pool-size)
-      (.setDataSourceClassName datasource-class-name))
+      (.setMaximumPoolSize     maximum-pool-size))
+    (if adapter
+      (->> (get adapters-to-datasource-class-names adapter)
+           (.setDataSourceClassName config))
+      (doto config
+        (.setJdbcUrl jdbc-url)
+        (.setDriverClassName driver-class-name)))
     ;; Set optional properties
     (if username (.setUsername config username))
     (if password (.setPassword config password))
