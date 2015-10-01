@@ -1,4 +1,4 @@
-(defproject bmabey/hikari-cp "1.3.2"
+(defproject bmabey/hikari-cp "1.3.2-SNAPSHOT"
   :description "A Clojure wrapper to HikariCP JDBC connection pool"
   :url "https://github.com/tomekw/hikari-cp"
   :license {:name "Eclipse Public License"
