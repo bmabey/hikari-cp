@@ -1,4 +1,4 @@
-(defproject hikari-cp "1.3.1"
+(defproject bmabey/hikari-cp "1.3.2"
   :description "A Clojure wrapper to HikariCP JDBC connection pool"
   :url "https://github.com/tomekw/hikari-cp"
   :license {:name "Eclipse Public License"
@@ -8,7 +8,9 @@
   :dependencies [[org.clojure/clojure         "1.7.0"]
                  [org.tobereplaced/lettercase "1.0.0"]
                  [com.zaxxer/HikariCP         "2.4.1"]
-                 [prismatic/schema            "1.0.0"]]
+                 [prismatic/schema            "1.0.0"]
+                 [prismatic/plumbing "0.5.0" :scope "provided"]
+                 [com.stuartsierra/component "0.3.0" :scope "provided"]]
   :profiles {:dev {
                    :dependencies [[expectations               "2.1.3"]
                                   [org.slf4j/slf4j-nop        "1.7.12"]
