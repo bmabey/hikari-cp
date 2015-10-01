@@ -5,12 +5,12 @@
             [plumbing.core :refer [defnk map-keys]]))
 
 
-(s/defrecord DataSource [config :- core/ConfigurationOptions datasource]
+(s/defrecord DataSource [db-config :- core/ConfigurationOptions datasource]
   component/Lifecycle
   (start [this]
          (if datasource
            this
-           (assoc this :datasource (core/make-datasource config))))
+           (assoc this :datasource (core/make-datasource db-config))))
 
   (stop [this]
         (when datasource
@@ -41,6 +41,5 @@
 
 (defnk datasource
   "Component constructor for use in system-graph: https://github.com/RedBrainLabs/system-graph"
-  [[:config db]]
-  ;;[[:config db :- ConfigurationOptions]]
+  [[:config db :- ConfigurationOptions]]
   (->DataSource db nil))
