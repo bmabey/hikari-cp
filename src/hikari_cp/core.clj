@@ -65,6 +65,7 @@
    :max-lifetime       IntGte0
    :minimum-idle       IntGte0
    :maximum-pool-size  IntGte1
+   (s/optional-key :connection-init-sql) s/Str
    s/Keyword           s/Any})
 
 (def AdapterConfigurationOptions
@@ -123,7 +124,8 @@
                 read-only
                 username
                 jdbc-url
-                driver-class-name]} options]
+                driver-class-name
+                connection-init-sql]} options]
     ;; Set pool-specific properties
     (doto config
       (.setAutoCommit          auto-commit)
@@ -134,6 +136,8 @@
       (.setMaxLifetime         max-lifetime)
       (.setMinimumIdle         minimum-idle)
       (.setMaximumPoolSize     maximum-pool-size))
+    (when connection-init-sql
+      (.setConnectionInitSql config connection-init-sql))
     (if adapter
       (->> (get adapters-to-datasource-class-names adapter)
            (.setDataSourceClassName config))
